@@ -55,10 +55,7 @@ class AuctionMemoryHandler {
       time: newTimer,
     };
 
-    console.log('updatedAuctionItem', updatedAuctionItem);
-
     this.runningActions.splice(auctionIndex, 1, updatedAuctionItem);
-    console.log('updatedRunningActions', this.runningActions);
   }
   public updateByCron({ id, isOver }: UpdateByCron) {
     const auctionIndex = this.getAuctionIndex(id);
