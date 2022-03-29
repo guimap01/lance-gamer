@@ -1,17 +1,49 @@
 import { Box, Button, Flex, Image, Stack, Text } from '@chakra-ui/react';
+import { useEffect, useRef, useState } from 'react';
 import { useTimer } from 'react-timer-hook';
+import { api } from 'services/api';
+import { AuctionType } from 'types/auctionType';
 import { currecyFormatter } from 'utils/currencyFormatter';
 
-export const AuctionItem = () => {
+interface AuctionItemProps {
+  auctionId: string;
+}
+
+export const AuctionItem = ({ auctionId }: AuctionItemProps) => {
+  const [auction, setAuction] = useState({} as AuctionType);
+  const interval = useRef<NodeJS.Timer>();
   const timer = new Date();
+
   const { seconds, restart } = useTimer({
     //@ts-ignore
-    expiryTimestamp: timer.setSeconds(timer.getSeconds() + 15),
+    expiryTimestamp: timer.setSeconds(timer.getSeconds() + 45),
   });
-
-  const handleLance = () => {
-    restart(timer);
+  const clearPulling = () => {
+    clearInterval(interval.current as NodeJS.Timer);
   };
+
+  const handleLoadAuction = async () => {
+    const resp = await api.get<AuctionType>(`/auction/${auctionId}`);
+    if (resp.data.isOver) {
+      clearPulling();
+    }
+    setAuction(resp.data);
+    restart(new Date(resp.data.time));
+  };
+
+  const handleLance = async () => {
+    await api.put(`/auction/${auctionId}`, {
+      userId: '1234',
+    });
+  };
+
+  useEffect(() => {
+    interval.current = setInterval(handleLoadAuction, 750);
+
+    return () => {
+      clearPulling();
+    };
+  }, []);
 
   const leftDigit = seconds >= 10 ? seconds.toString()[0] : '0';
   const rightDigit = seconds >= 10 ? seconds.toString()[1] : seconds.toString();
@@ -56,7 +88,7 @@ export const AuctionItem = () => {
       </Flex>
       <Text>Pedro Monteiro</Text>
       <Text fontSize={24} color="cyan">
-        {currecyFormatter(40.63)}
+        {currecyFormatter(auction.price)}
       </Text>
       <Button
         onClick={handleLance}
@@ -64,8 +96,9 @@ export const AuctionItem = () => {
         textTransform="uppercase"
         w="40"
         fontSize={24}
+        disabled={auction.isOver}
       >
-        Lance
+        {auction.isOver ? 'Finalizado' : 'Lance'}
       </Button>
     </Stack>
   );
