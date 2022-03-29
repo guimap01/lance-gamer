@@ -1,11 +1,10 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { isAfter } from 'date-fns';
 import auctionMemoryHandler from 'src/auction/auction-memory-handler';
 
 @Injectable()
 export class TasksService {
-  private readonly logger = new Logger(TasksService.name);
-
   @Cron(CronExpression.EVERY_SECOND)
   handleCron() {
     const runningAuction = auctionMemoryHandler
@@ -13,13 +12,10 @@ export class TasksService {
       .filter((auction) => !auction.isOver);
 
     runningAuction.forEach((auction) => {
-      const isOver = auction.time.getSeconds() <= new Date().getSeconds();
-      if (!isOver || auction.isOver) {
+      if (!isAfter(new Date(), auction.time)) {
         return;
       }
-      auctionMemoryHandler.updateByCron({ id: auction.id, isOver });
-      this.logger.debug('Updated');
+      auctionMemoryHandler.updateByCron({ id: auction.id, isOver: true });
     });
-    this.logger.debug(auctionMemoryHandler.getAuctionByID('123'));
   }
 }

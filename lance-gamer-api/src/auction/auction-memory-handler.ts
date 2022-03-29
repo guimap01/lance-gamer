@@ -46,7 +46,7 @@ class AuctionMemoryHandler {
     }
 
     const newTimer = new Date();
-    newTimer.setSeconds(newTimer.getSeconds() + 15);
+    newTimer.setSeconds(newTimer.getSeconds() + 45);
 
     const updatedAuctionItem: AuctionInMemoryDto = {
       ...this.runningActions[auctionIndex],

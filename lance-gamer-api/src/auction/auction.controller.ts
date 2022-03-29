@@ -34,7 +34,7 @@ export class AuctionController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.auctionService.findOne(+id);
+    return auctionMemoryHandler.getAuctionByID(id);
   }
 
   @Patch(':id')
