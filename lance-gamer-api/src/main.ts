@@ -7,9 +7,17 @@ import { AuctionInMemoryDto } from './auction/dto/auction-in-memory.dto';
 async function bootstrap() {
   const time = new Date();
   time.setSeconds(time.getSeconds() + 45);
-  const auctionItem = new AuctionInMemoryDto(10.11, time, '123', '1234', false);
+  const auctionItem = new AuctionInMemoryDto(
+    10.11,
+    time,
+    time,
+    '123',
+    '1234',
+    false,
+  );
   const auctionItem2 = new AuctionInMemoryDto(
     10.11,
+    time,
     time,
     '124',
     '1234',
@@ -18,12 +26,14 @@ async function bootstrap() {
   const auctionItem3 = new AuctionInMemoryDto(
     10.11,
     time,
+    time,
     '125',
     '1234',
     false,
   );
   const auctionItem4 = new AuctionInMemoryDto(
     10.11,
+    time,
     time,
     '126',
     '1234',

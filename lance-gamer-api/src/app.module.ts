@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TasksService } from './tasks-service/tasks.service';
 import { AuctionModule } from './auction/auction.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
+import { TasksModule } from './tasks/tasks.module';
 
 @Module({
   imports: [
@@ -24,8 +24,9 @@ import { AuthModule } from './auth/auth.module';
     AuctionModule,
     UserModule,
     AuthModule,
+    TasksModule,
   ],
   controllers: [],
-  providers: [TasksService],
+  providers: [],
 })
 export class AppModule {}

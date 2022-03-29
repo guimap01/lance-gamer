@@ -1,5 +1,4 @@
 import {
-  Inject,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -50,11 +49,12 @@ export class UserService {
   }
 
   async findOne(id: string) {
-    const user = this.userRepository.findOneBy({ id });
+    const user = await this.userRepository.findOneBy({ id });
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    return user;
+    const { password, ...rest } = user;
+    return rest;
   }
 
   private async findByEmail(email: string) {
