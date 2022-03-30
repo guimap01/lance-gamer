@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -27,9 +28,14 @@ export class UserService {
       ...createUserDto,
       password: encryptedPassword,
     };
-    const user = this.userRepository.create(userObj);
+    try {
+      const user = this.userRepository.create(userObj);
 
-    return this.userRepository.save(user);
+      const createdUser = await this.userRepository.save(user);
+      return createdUser;
+    } catch {
+      throw new BadRequestException('E-mail or CPF already in use');
+    }
   }
 
   async login(loginUserDto: LoginUserDto) {
@@ -65,7 +71,7 @@ export class UserService {
     return user;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
+  async update(id: number, updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} user`;
   }
 
